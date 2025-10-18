@@ -16,7 +16,7 @@ type ProxyDialerTestSuite struct {
 }
 
 func (suite *ProxyDialerTestSuite) SetupSuite() {
-	u, _ := url.Parse("socks5://hello:world@10.0.0.10:3128")
+	u, _ := url.Parse("wss://hello:world@10.0.0.10:3128")
 	suite.u = u
 }
 

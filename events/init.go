@@ -16,7 +16,7 @@
 // EventStart for that session yet.
 package events
 
-import "github.com/9seconds/mtg/v2/mtglib"
+import "github.com/liaodiansm/mtg/mtglib"
 
 // Observer is an instance that listens for the incoming events.
 //
@@ -47,14 +47,8 @@ type Observer interface {
 	// mtglib.EventConcurrencyLimited event.
 	EventConcurrencyLimited(mtglib.EventConcurrencyLimited)
 
-	// EventIPBlocklisted reacts on incoming mtglib.EventIPBlocklisted event.
-	EventIPBlocklisted(mtglib.EventIPBlocklisted)
-
 	// EventReplayAttack reacts on incoming mtglib.EventReplayAttack event.
 	EventReplayAttack(mtglib.EventReplayAttack)
-
-	// EventIPListSize reacts on incoming mtglib.EventIPListSize
-	EventIPListSize(mtglib.EventIPListSize)
 
 	// Shutdown stop observer. Default event stream guarantees:
 	//   1. If shutdown is executed, it is executed only once

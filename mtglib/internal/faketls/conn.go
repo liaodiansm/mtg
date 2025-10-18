@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/9seconds/mtg/v2/essentials"
-	"github.com/9seconds/mtg/v2/mtglib/internal/faketls/record"
+	"github.com/liaodiansm/mtg/essentials"
+	"github.com/liaodiansm/mtg/mtglib/internal/faketls/record"
 )
 
 type Conn struct {

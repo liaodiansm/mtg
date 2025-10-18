@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/9seconds/mtg/v2/internal/config"
+	"github.com/liaodiansm/mtg/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -21,7 +21,7 @@ type ProxyURLTestSuite struct {
 func (suite *ProxyURLTestSuite) TestUnmarshalFail() {
 	testData := []string{
 		"",
-		"socks5://",
+		"wss://",
 		"://lala",
 		"/path",
 	}
@@ -40,8 +40,8 @@ func (suite *ProxyURLTestSuite) TestUnmarshalFail() {
 
 func (suite *ProxyURLTestSuite) TestUnmarshalOk() {
 	testData := map[string]string{
-		"socks5://127.0.0.1/?open_threshold=1": "socks5://127.0.0.1:1080/?open_threshold=1",
-		"socks5://127.0.0.1:80":                "socks5://127.0.0.1:80",
+		"wss://127.0.0.1/?open_threshold=1": "wss://127.0.0.1:1080/?open_threshold=1",
+		"wss://127.0.0.1:80":                "wss://127.0.0.1:80",
 	}
 
 	for k, v := range testData {
@@ -67,7 +67,7 @@ func (suite *ProxyURLTestSuite) TestUnmarshalOk() {
 }
 
 func (suite *ProxyURLTestSuite) TestMarshalOk() {
-	parsed, _ := url.Parse("socks5://127.0.0.1:1080?open_threshold=1")
+	parsed, _ := url.Parse("wss://127.0.0.1:1080?open_threshold=1")
 	testStruct := &typeProxyURLTestStruct{
 		Value: config.TypeProxyURL{
 			Value: parsed,
@@ -76,7 +76,7 @@ func (suite *ProxyURLTestSuite) TestMarshalOk() {
 
 	encodedJSON, err := json.Marshal(testStruct)
 	suite.NoError(err)
-	suite.JSONEq(`{"value": "socks5://127.0.0.1:1080?open_threshold=1"}`,
+	suite.JSONEq(`{"value": "wss://127.0.0.1:1080?open_threshold=1"}`,
 		string(encodedJSON))
 }
 

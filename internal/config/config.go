@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/9seconds/mtg/v2/mtglib"
+	"github.com/liaodiansm/mtg/mtglib"
 )
 
 type Optional struct {
@@ -15,9 +15,8 @@ type Optional struct {
 type ListConfig struct {
 	Optional
 
-	DownloadConcurrency TypeConcurrency    `json:"downloadConcurrency"`
-	URLs                []TypeBlocklistURI `json:"urls"`
-	UpdateEach          TypeDuration       `json:"updateEach"`
+	DownloadConcurrency TypeConcurrency `json:"downloadConcurrency"`
+	UpdateEach          TypeDuration    `json:"updateEach"`
 }
 
 type Config struct {
@@ -36,8 +35,6 @@ type Config struct {
 			MaxSize   TypeBytes     `json:"maxSize"`
 			ErrorRate TypeErrorRate `json:"errorRate"`
 		} `json:"antiReplay"`
-		Blocklist ListConfig `json:"blocklist"`
-		Allowlist ListConfig `json:"allowlist"`
 	} `json:"defense"`
 	Network struct {
 		Timeout struct {
@@ -48,22 +45,6 @@ type Config struct {
 		DOHIP   TypeIP         `json:"dohIp"`
 		Proxies []TypeProxyURL `json:"proxies"`
 	} `json:"network"`
-	Stats struct {
-		StatsD struct {
-			Optional
-
-			Address      TypeHostPort        `json:"address"`
-			MetricPrefix TypeMetricPrefix    `json:"metricPrefix"`
-			TagFormat    TypeStatsdTagFormat `json:"tagFormat"`
-		} `json:"statsd"`
-		Prometheus struct {
-			Optional
-
-			BindTo       TypeHostPort     `json:"bindTo"`
-			HTTPPath     TypeHTTPPath     `json:"httpPath"`
-			MetricPrefix TypeMetricPrefix `json:"metricPrefix"`
-		} `json:"prometheus"`
-	} `json:"stats"`
 }
 
 func (c *Config) Validate() error {

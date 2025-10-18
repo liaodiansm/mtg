@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"runtime"
 
-	"github.com/9seconds/mtg/v2/mtglib"
 	"github.com/OneOfOne/xxhash"
+	"github.com/liaodiansm/mtg/mtglib"
 )
 
 // EventStream is a default implementation of the [mtglib.EventStream]
@@ -96,14 +96,10 @@ func eventStreamProcessor(ctx context.Context, eventChan <-chan mtglib.Event, ob
 				observer.EventConnectedToDC(typedEvt)
 			case mtglib.EventDomainFronting:
 				observer.EventDomainFronting(typedEvt)
-			case mtglib.EventIPBlocklisted:
-				observer.EventIPBlocklisted(typedEvt)
 			case mtglib.EventConcurrencyLimited:
 				observer.EventConcurrencyLimited(typedEvt)
 			case mtglib.EventReplayAttack:
 				observer.EventReplayAttack(typedEvt)
-			case mtglib.EventIPListSize:
-				observer.EventIPListSize(typedEvt)
 			}
 		}
 	}

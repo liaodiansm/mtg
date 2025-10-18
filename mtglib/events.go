@@ -78,28 +78,10 @@ type EventConcurrencyLimited struct {
 	eventBase
 }
 
-// EventIPBlocklisted is emitted when connection was declined because IP
-// address was found in IP blocklist.
-type EventIPBlocklisted struct {
-	eventBase
-
-	RemoteIP    net.IP
-	IsBlockList bool
-}
-
 // EventReplayAttack is emitted when mtg detects a replay attack on a
 // connection.
 type EventReplayAttack struct {
 	eventBase
-}
-
-// EventIPListSize is emitted when mtg updates a contents of the ip lists:
-// allowlist or blocklist.
-type EventIPListSize struct {
-	eventBase
-
-	Size        int
-	IsBlockList bool
 }
 
 // NewEventStart creates a new EventStart event.
@@ -167,29 +149,6 @@ func NewEventConcurrencyLimited() EventConcurrencyLimited {
 	}
 }
 
-// NewEventIPBlocklisted creates a new EventIPBlocklisted event.
-func NewEventIPBlocklisted(remoteIP net.IP) EventIPBlocklisted {
-	return EventIPBlocklisted{
-		eventBase: eventBase{
-			timestamp: time.Now(),
-		},
-		RemoteIP:    remoteIP,
-		IsBlockList: true,
-	}
-}
-
-// NewEventIPAllowlisted creates a NewEventIPBlocklisted event with a mark that
-// it is supposed to be for allow list.
-func NewEventIPAllowlisted(remoteIP net.IP) EventIPBlocklisted {
-	return EventIPBlocklisted{
-		eventBase: eventBase{
-			timestamp: time.Now(),
-		},
-		RemoteIP:    remoteIP,
-		IsBlockList: false,
-	}
-}
-
 // NewEventReplayAttack creates a new EventReplayAttack event.
 func NewEventReplayAttack(streamID string) EventReplayAttack {
 	return EventReplayAttack{
@@ -197,16 +156,5 @@ func NewEventReplayAttack(streamID string) EventReplayAttack {
 			timestamp: time.Now(),
 			streamID:  streamID,
 		},
-	}
-}
-
-// NewEventIPListSize creates a new EventIPListSize event.
-func NewEventIPListSize(size int, isBlockList bool) EventIPListSize {
-	return EventIPListSize{
-		eventBase: eventBase{
-			timestamp: time.Now(),
-		},
-		Size:        size,
-		IsBlockList: isBlockList,
 	}
 }

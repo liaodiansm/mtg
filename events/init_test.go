@@ -1,7 +1,7 @@
 package events_test
 
 import (
-	"github.com/9seconds/mtg/v2/mtglib"
+	"github.com/liaodiansm/mtg/mtglib"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -33,15 +33,7 @@ func (o *ObserverMock) EventConcurrencyLimited(evt mtglib.EventConcurrencyLimite
 	o.Called(evt)
 }
 
-func (o *ObserverMock) EventIPBlocklisted(evt mtglib.EventIPBlocklisted) {
-	o.Called(evt)
-}
-
 func (o *ObserverMock) EventReplayAttack(evt mtglib.EventReplayAttack) {
-	o.Called(evt)
-}
-
-func (o *ObserverMock) EventIPListSize(evt mtglib.EventIPListSize) {
 	o.Called(evt)
 }
 

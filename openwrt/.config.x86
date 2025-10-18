@@ -1,0 +1,21 @@
+CONFIG_TARGET_x86=y
+CONFIG_TARGET_x86_64=y
+CONFIG_TARGET_x86_64_Generic=y
+
+CONFIG_PACKAGE_testgo=y
+
+# 基础系统组件
+CONFIG_PACKAGE_libc=y
+CONFIG_PACKAGE_libpthread=y
+CONFIG_PACKAGE_librt=y
+
+# 可选：启用 BusyBox（如果你的程序依赖 shell 工具）
+CONFIG_PACKAGE_busybox=y
+
+# 可选：启用网络支持（如果你的程序需要）
+CONFIG_PACKAGE_libcurl=y
+CONFIG_PACKAGE_ca-certificates=y
+
+# 禁用图形界面和不必要的模块
+# CONFIG_PACKAGE_luci is not set
+# CONFIG_PACKAGE_kmod-* is not set

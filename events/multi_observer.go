@@ -3,7 +3,7 @@ package events
 import (
 	"sync"
 
-	"github.com/9seconds/mtg/v2/mtglib"
+	"github.com/liaodiansm/mtg/mtglib"
 )
 
 type multiObserver struct {
@@ -100,21 +100,6 @@ func (m multiObserver) EventConcurrencyLimited(evt mtglib.EventConcurrencyLimite
 	wg.Wait()
 }
 
-func (m multiObserver) EventIPBlocklisted(evt mtglib.EventIPBlocklisted) {
-	wg := &sync.WaitGroup{}
-	wg.Add(len(m.observers))
-
-	for _, v := range m.observers {
-		go func(obs Observer) {
-			defer wg.Done()
-
-			obs.EventIPBlocklisted(evt)
-		}(v)
-	}
-
-	wg.Wait()
-}
-
 func (m multiObserver) EventReplayAttack(evt mtglib.EventReplayAttack) {
 	wg := &sync.WaitGroup{}
 	wg.Add(len(m.observers))
@@ -124,21 +109,6 @@ func (m multiObserver) EventReplayAttack(evt mtglib.EventReplayAttack) {
 			defer wg.Done()
 
 			obs.EventReplayAttack(evt)
-		}(v)
-	}
-
-	wg.Wait()
-}
-
-func (m multiObserver) EventIPListSize(evt mtglib.EventIPListSize) {
-	wg := &sync.WaitGroup{}
-	wg.Add(len(m.observers))
-
-	for _, v := range m.observers {
-		go func(obs Observer) {
-			defer wg.Done()
-
-			obs.EventIPListSize(evt)
 		}(v)
 	}
 

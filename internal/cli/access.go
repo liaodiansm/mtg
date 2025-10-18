@@ -13,10 +13,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/9seconds/mtg/v2/essentials"
-	"github.com/9seconds/mtg/v2/internal/config"
-	"github.com/9seconds/mtg/v2/internal/utils"
-	"github.com/9seconds/mtg/v2/mtglib"
+	"github.com/liaodiansm/mtg/essentials"
+	"github.com/liaodiansm/mtg/internal/config"
+	"github.com/liaodiansm/mtg/internal/utils"
+	"github.com/liaodiansm/mtg/mtglib"
 )
 
 type accessResponse struct {

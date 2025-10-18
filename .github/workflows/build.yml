@@ -1,0 +1,97 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'
+        check-latest: true
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential golang wget tar zip dos2unix
+
+    - name: Build Linux amd64 binary
+      run: |
+        mkdir -p build
+        GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/mtg .
+
+    - name: Inject version from tag
+      run: |
+        VERSION=${GITHUB_REF_NAME#v}
+        sed -i "s/^PKG_VERSION:=.*$/PKG_VERSION:=${VERSION}/" openwrt/Makefile
+
+    - name: Prepare OpenWrt SDK
+      run: |
+        wget https://downloads.openwrt.org/releases/23.05.3/targets/x86/64/openwrt-sdk-23.05.3-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        tar -xf openwrt-sdk-23.05.3-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz
+        mv openwrt-sdk-23.05.3-x86-64_gcc-12.3.0_musl.Linux-x86_64 openwrt-sdk
+
+        mkdir -p openwrt-sdk/package/mtg
+        cp build/mtg config.toml openwrt/mtg.init openwrt/Makefile openwrt-sdk/package/mtg/
+        cp openwrt/.config.x86 openwrt-sdk/.config
+
+        # 清理 Makefile 换行符和隐藏字符
+        dos2unix openwrt-sdk/package/mtg/Makefile
+
+    - name: Build IPK
+      run: |
+        cd openwrt-sdk
+        make defconfig
+        make package/mtg/compile V=s
+
+    - name: Build other binary && Package
+      run: |
+        mkdir -p dist
+
+        # linux x86_64
+        cp build/mtg dist/mtg-linux-amd64
+        cp config.toml dist/
+        tar -czf dist/mtg-linux-amd64.tar.gz -C dist mtg-linux-amd64 config.toml
+
+        # linux ARM64
+        GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o dist/mtg-linux-arm64 .
+        tar -czf dist/mtg-linux-arm64.tar.gz -C dist mtg-linux-arm64 config.toml
+
+        # macOS x86_64
+        GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o dist/mtg-macos-amd64 .
+        tar -czf dist/mtg-macos-amd64.tar.gz -C dist mtg-macos-amd64 config.toml
+
+        # macOS ARM64
+        GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o dist/mtg-macos-arm64 .
+        tar -czf dist/mtg-macos-arm64.tar.gz -C dist mtg-macos-arm64 config.toml
+
+        # windows x86_64
+        GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o dist/mtg-windows-amd64.exe .
+        zip -j dist/mtg-windows-amd64.zip dist/mtg-windows-amd64.exe config.toml
+
+        # windows ARM64
+        GOOS=windows GOARCH=arm64 CGO_ENABLED=0 go build -o dist/mtg-windows-arm64.exe .
+        zip -j dist/mtg-windows-arm64.zip dist/mtg-windows-arm64.exe config.toml
+
+    - name: Upload release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+        files: |
+          dist/*.tar.gz
+          dist/*.zip
+          openwrt-sdk/bin/packages/x86_64/base/mtg*.ipk
+          
+        body: |
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}

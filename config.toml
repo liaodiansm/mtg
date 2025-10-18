@@ -1,0 +1,65 @@
+# 开启调试模式，默认关闭
+debug = false
+
+# 代理的 FakeTLS Secret， 必须是 以 ee 开头的十六进制字符串(--hex) 或者 Base64 格式
+# 可以使用命令生成，参数：generate-secret --hex [伪装域名]
+secret = "7vA0gumqNtwc8QG3b0KEdhljbi5iaW5nLmNvbQ"
+
+# 代理监听的地址和端口
+# 默认支持 ipv4 和 ipv6
+# 如果只需要支持ipv4，可以改为 0.0.0.0:3128
+bind-to = "[::]:53128"
+
+# 最大并发连接数，超过这个数的新连接会被拒绝
+concurrency = 8192
+
+# telegramram 服务器连接方式（有四种选择），默认 ipv4 优先
+# 优先 ipv6： prefer-ipv6
+# 优先 ipv4： prefer-ipv4
+# 仅限 ipv6： only-ipv6
+# 仅限 ipv4： only-ipv4
+prefer-ip = "prefer-ipv4"
+
+# FakeTLS 所用的端口（一般是 443）
+domain-fronting-port = 443
+
+# Telegram 消息里有加密时间戳，防探测。允许时间误差 5 秒。
+tolerate-time-skewness = "5s"
+
+# 当客户端请求未知的 DC（Telegram 数据中心）时，是否 fallback 到任意 DC：
+# 默认拒绝请求
+allow-fallback-on-unknown-dc = false
+
+# 使用 DNS over HTTPS 的服务器（默认 Cloudflare）。
+# 不建议使用系统 DNS。
+[network]
+doh-ip = "1.1.1.1"
+
+# 可以设置 mtg 通过 WebSocket 代理再去连 Telegram， 不设置则之间连接
+# 搭配的 wss 协议，暂时没有用户名，只有密码（密码可以为空）
+# open_threshold=5  如果连续 5 次连接失败，mtg 会“熔断”这个代理，也就是暂时不再使用它。
+# half_open_timeout=1m 在熔断后 等待 1 分钟，再尝试恢复连接（进入半开状态，测试这个代理是不是恢复了）。
+# reset_failures_timeout=10s 如果熔断器处于 关闭状态（代理正常可用），那么在 10 秒内如果没发生错误，失败计数会被清零。相当于给错误计数一个“过期时间”，避免偶尔失败就触发熔断。
+proxies = [
+    # "wss://:password@host:port?open_threshold=5&half_open_timeout=1m&reset_failures_timeout=10s"
+]
+
+# 超时设置
+# 默认 TCP 连接超时 5 秒
+# 默认 HTTP 请求超时 10 秒
+# 默认 连接空闲 1 分钟后断开
+[network.timeout]
+tcp = "5s"
+http = "10s"
+idle = "1m"
+
+# 防御主动探测（replay attack）：
+[defense.anti-replay]
+# 默认开启防重放检查
+enabled = true
+
+# 缓存大小
+max-size = "1mib"
+
+# 使用 Bloom filter 控制误判率
+error-rate = 0.001

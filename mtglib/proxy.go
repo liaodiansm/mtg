@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/9seconds/mtg/v2/essentials"
-	"github.com/9seconds/mtg/v2/mtglib/internal/faketls"
-	"github.com/9seconds/mtg/v2/mtglib/internal/faketls/record"
-	"github.com/9seconds/mtg/v2/mtglib/internal/obfuscated2"
-	"github.com/9seconds/mtg/v2/mtglib/internal/relay"
-	"github.com/9seconds/mtg/v2/mtglib/internal/telegram"
+	"github.com/liaodiansm/mtg/essentials"
+	"github.com/liaodiansm/mtg/mtglib/internal/faketls"
+	"github.com/liaodiansm/mtg/mtglib/internal/faketls/record"
+	"github.com/liaodiansm/mtg/mtglib/internal/obfuscated2"
+	"github.com/liaodiansm/mtg/mtglib/internal/relay"
+	"github.com/liaodiansm/mtg/mtglib/internal/telegram"
 	"github.com/panjf2000/ants/v2"
 )
 
@@ -33,8 +33,6 @@ type Proxy struct {
 	secret          Secret
 	network         Network
 	antiReplayCache AntiReplayCache
-	blocklist       IPBlocklist
-	allowlist       IPBlocklist
 	eventStream     EventStream
 	logger          Logger
 }
@@ -109,22 +107,6 @@ func (p *Proxy) Serve(listener net.Listener) error {
 		ipAddr := conn.RemoteAddr().(*net.TCPAddr).IP //nolint: forcetypeassert
 		logger := p.logger.BindStr("ip", ipAddr.String())
 
-		if !p.allowlist.Contains(ipAddr) {
-			conn.Close()
-			logger.Info("ip was rejected by allowlist")
-			p.eventStream.Send(p.ctx, NewEventIPAllowlisted(ipAddr))
-
-			continue
-		}
-
-		if p.blocklist.Contains(ipAddr) {
-			conn.Close()
-			logger.Info("ip was blacklisted")
-			p.eventStream.Send(p.ctx, NewEventIPBlocklisted(ipAddr))
-
-			continue
-		}
-
 		err = p.workerPool.Invoke(conn)
 
 		switch {
@@ -144,9 +126,6 @@ func (p *Proxy) Shutdown() {
 	p.ctxCancel()
 	p.streamWaitGroup.Wait()
 	p.workerPool.Release()
-
-	p.allowlist.Shutdown()
-	p.blocklist.Shutdown()
 }
 
 func (p *Proxy) doFakeTLSHandshake(ctx *streamContext) bool {
@@ -304,8 +283,6 @@ func NewProxy(opts ProxyOpts) (*Proxy, error) {
 		secret:                   opts.Secret,
 		network:                  opts.Network,
 		antiReplayCache:          opts.AntiReplayCache,
-		blocklist:                opts.IPBlocklist,
-		allowlist:                opts.IPAllowlist,
 		eventStream:              opts.EventStream,
 		logger:                   opts.getLogger("proxy"),
 		domainFrontingPort:       opts.getDomainFrontingPort(),

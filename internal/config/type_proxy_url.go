@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-const typeProxyURLDefaultSOCKS5Port = "1080"
+const typeProxyURLDefaultWSSPort = "443"
 
 type TypeProxyURL struct {
 	Value *url.URL
@@ -22,13 +22,13 @@ func (t *TypeProxyURL) Set(value string) error {
 		return fmt.Errorf("url has to have a schema: %s", value)
 	}
 
-	if parsedURL.Scheme != "socks5" {
+	if parsedURL.Scheme != "wss" {
 		return fmt.Errorf("unsupported schema: %s", parsedURL.Scheme)
 	}
 
 	if _, _, err := net.SplitHostPort(parsedURL.Host); err != nil {
 		parsedURL.Host = net.JoinHostPort(parsedURL.Host,
-			typeProxyURLDefaultSOCKS5Port)
+			typeProxyURLDefaultWSSPort)
 	}
 
 	t.Value = parsedURL

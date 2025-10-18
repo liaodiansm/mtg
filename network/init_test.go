@@ -5,12 +5,10 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 
-	"github.com/9seconds/mtg/v2/essentials"
-	"github.com/9seconds/mtg/v2/network"
-	socks5 "github.com/armon/go-socks5"
+	"github.com/liaodiansm/mtg/essentials"
+	"github.com/liaodiansm/mtg/network"
 	"github.com/mccutchen/go-httpbin/httpbin"
 	"github.com/stretchr/testify/mock"
 )
@@ -58,33 +56,5 @@ func (suite *HTTPServerTestSuite) MakeHTTPClient(dialer network.Dialer) *http.Cl
 				return dialer.DialContext(ctx, network, address) //nolint: wrapcheck
 			},
 		},
-	}
-}
-
-type Socks5ServerTestSuite struct {
-	socks5Listener net.Listener
-	socks5Server   *socks5.Server
-}
-
-func (suite *Socks5ServerTestSuite) SetupSuite() {
-	suite.socks5Listener, _ = net.Listen("tcp", "127.0.0.1:0")
-	suite.socks5Server, _ = socks5.New(&socks5.Config{
-		Credentials: socks5.StaticCredentials{
-			"user": "password",
-		},
-	})
-
-	go suite.socks5Server.Serve(suite.socks5Listener) //nolint: errcheck
-}
-
-func (suite *Socks5ServerTestSuite) TearDownSuite() {
-	suite.socks5Listener.Close()
-}
-
-func (suite *Socks5ServerTestSuite) MakeSocks5URL(user, password string) *url.URL {
-	return &url.URL{
-		Scheme: "socks5",
-		User:   url.UserPassword(user, password),
-		Host:   suite.socks5Listener.Addr().String(),
 	}
 }
