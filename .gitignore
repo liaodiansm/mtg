@@ -11,3 +11,4 @@ ccbuilds/
 .bin/
 coverage.txt
 dist/
+.DS_Store
