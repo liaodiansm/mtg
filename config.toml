@@ -3,7 +3,7 @@ debug = false
 
 # 代理的 FakeTLS Secret， 必须是 以 ee 开头的十六进制字符串(--hex) 或者 Base64 格式
 # 可以使用命令生成，参数：generate-secret --hex [伪装域名]
-secret = "7vA0gumqNtwc8QG3b0KEdhljbi5iaW5nLmNvbQ"
+secret = "7mC4HmBtK79GSHvOIOh-Ivd3d3cuYmluZy5jb20"
 
 # 代理监听的地址和端口
 # 默认支持 ipv4 和 ipv6
