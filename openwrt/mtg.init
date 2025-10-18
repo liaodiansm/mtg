@@ -4,10 +4,22 @@ START=99
 USE_PROCD=1
 PROG=/usr/bin/mtg
 CONFIG=/etc/mtg/config.toml
+SERVICE_NAME="mtg"
 
 start_service() {
+    echo "Starting $SERVICE_NAME..."
 	procd_open_instance
 	procd_set_param command "$PROG" run "$CONFIG"
 	procd_set_param respawn
 	procd_close_instance	
+}
+
+stop_service() {
+    echo "Stopping $SERVICE_NAME..."
+    killall -q $SERVICE_NAME
+}
+
+restart_service() {
+    stop
+    start
 }
