@@ -30,8 +30,7 @@ tolerate-time-skewness = "5s"
 # 默认拒绝请求
 allow-fallback-on-unknown-dc = false
 
-# 使用 DNS over HTTPS 的服务器（默认 Cloudflare）。
-# 不建议使用系统 DNS。
+# 使用 DNS over HTTPS 的服务器（默认 Cloudflare）。不建议使用系统 DNS。
 [network]
 doh-ip = "1.1.1.1"
 
